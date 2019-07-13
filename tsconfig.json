@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "module": "commonjs",
+    "strict": true,
+    "declaration": true,
+    "esModuleInterop": true,
+    "outDir": "dist"
+  },
+  "include": [
+    "transformer.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

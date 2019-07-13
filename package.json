@@ -1,0 +1,28 @@
+{
+  "name": "ts-use-exports",
+  "version": "1.0.0",
+  "description": "A TypeScript custom transformer that redirects function reference to the exports object.",
+  "repository": "https://github.com/tommyip/ts-use-exports",
+  "author": "Thomas Ip",
+  "license": "MIT",
+  "keywords": [
+    "typescript",
+    "typescript-transformer",
+    "commonjs",
+    "exports",
+    "testing",
+    "unit-testing",
+    "stubs"
+  ],
+  "main": "dist/transformer.js",
+  "types": "dist/transformer.d.ts",
+  "scripts": {
+    "build": "tsc"
+  },
+  "devDependencies": {
+    "typescript": "^3.5.3"
+  },
+  "peerDependencies": {
+    "typescript": ">=3.5.0"
+  }
+}
