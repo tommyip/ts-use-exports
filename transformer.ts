@@ -31,7 +31,7 @@ function visitNode(node: ts.Node, program: ts.Program): ts.Node {
         const symbol = typeChecker.getSymbolAtLocation(node);
         // Check that the identifier is a function name but not part of
         // the function header itself.
-        if (symbol &&
+        if (symbol && symbol.valueDeclaration &&
             !ts.isExportSpecifier(node.parent) &&
             !ts.isFunctionDeclaration(node.parent) &&
             ts.isFunctionDeclaration(symbol.valueDeclaration))

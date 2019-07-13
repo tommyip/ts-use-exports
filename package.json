@@ -1,6 +1,6 @@
 {
   "name": "ts-use-exports",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A TypeScript custom transformer that redirects function reference to the exports object.",
   "repository": "https://github.com/tommyip/ts-use-exports",
   "author": "Thomas Ip",
