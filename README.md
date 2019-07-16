@@ -71,8 +71,8 @@ ts-node by default does not provide a program instance to custom transformers.
 We will use `ttypescript` (install with `yarn add ttypescript`) to work around
 this limitation.
 
-```json
-// tsconfig.json
+```js
+/** tsconfig.json */
 {
   "compilerOptions": {
     // ...
@@ -98,7 +98,7 @@ require('ts-node').register({
 ### Webpack (with ts-loader / awesome-typescript-loader)
 
 ```js
-// webpack.config.js
+/** webpack.config.js */
 const tsUseExports = require('ts-use-exports');
 
 module.exports = {
@@ -121,12 +121,5 @@ module.exports = {
 
 ## Note
 
-* The transformer currently can only detect exported function if it is declared
-  with an export modifier. The transformer does not work if you use an export
-  statment.
-  ```ts
-  function foo () { }
-  export { foo };
-  ```
 * The module target must be CommonJS (either set explicity or implied by
   `ES3`/`ES5` target).
