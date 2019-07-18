@@ -17,9 +17,29 @@
   "main": "dist/transformer.js",
   "types": "dist/transformer.d.ts",
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "test": "TS_NODE_PROJECT=tests/tsconfig.json TS_NODE_COMPILER=ttypescript ava"
   },
   "dependencies": {
     "ts-morph": "^3.1.2"
+  },
+  "devDependencies": {
+    "@types/sinon": "^7.0.13",
+    "ava": "^2.2.0",
+    "sinon": "^7.3.2",
+    "ts-node": "^8.3.0",
+    "ttypescript": "^1.5.7"
+  },
+  "ava": {
+    "files": [
+      "tests/**/test_*"
+    ],
+    "compileEnhancements": false,
+    "extensions": [
+      "ts"
+    ],
+    "require": [
+      "ts-node/register"
+    ]
   }
 }

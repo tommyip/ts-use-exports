@@ -1,0 +1,9 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "module": "commonjs",
+    "plugins": [
+      { "transform": "./transformer.ts" }
+    ]
+  }
+}
