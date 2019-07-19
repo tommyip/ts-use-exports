@@ -92,7 +92,7 @@ Alternatively, if you use ts-node programmatically,
 require('ts-node').register({
   project: 'tsconfig.json',
   compiler: 'ttypescript',
-})
+});
 ```
 
 ### Webpack (with ts-loader / awesome-typescript-loader)
@@ -123,3 +123,6 @@ module.exports = {
 
 * The module target must be CommonJS (either set explicity or implied by
   `ES3`/`ES5` target).
+
+* The transformer currently does not produce the correct output if you alias
+  a function name. See issue #3.
