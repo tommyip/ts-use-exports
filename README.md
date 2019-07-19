@@ -1,7 +1,7 @@
 # ts-use-exports
 
-![CircleCI](https://img.shields.io/circleci/build/github/tommyip/ts-use-exports.svg?style=flat&logo=circleci)
-![npm](https://img.shields.io/npm/v/ts-use-exports.svg?color=blueviolet)
+[![CircleCI](https://img.shields.io/circleci/build/github/tommyip/ts-use-exports.svg?style=flat&logo=circleci)](https://circleci.com/gh/tommyip/ts-use-exports)
+[![npm](https://img.shields.io/npm/v/ts-use-exports.svg?color=blueviolet)](https://www.npmjs.com/package/ts-use-exports)
 
 A TypeScript custom transformer that redirects function reference to the
 exports object.
