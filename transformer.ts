@@ -1,6 +1,7 @@
 import { createWrappedNode, ts } from 'ts-morph';
 
-type PosToIdMap = Map<number, { name: string, isDefault: boolean }>;
+type PosToIdMap = Map<number, { name: string, isDefault: boolean, defPos: number }>;
+type FnToPosMap = Map<string, number>;
 
 export default function transformer(program: ts.Program): ts.TransformerFactory<ts.SourceFile> {
     const moduleTarget = program.getCompilerOptions().module;
@@ -16,7 +17,7 @@ export default function transformer(program: ts.Program): ts.TransformerFactory<
             // 1. Aggregate exported function names
             const functions = wrappedFile.getFunctions();
             let defaultExport = '';
-            const exports = new Set<string>();
+            const exports: FnToPosMap = new Map();
             for (const fn of functions) {
                 if (fn.isExported()) {
                     const name = fn.getName();
@@ -26,7 +27,7 @@ export default function transformer(program: ts.Program): ts.TransformerFactory<
                         if (name === undefined) continue;
                         defaultExport = name;
                     }
-                    exports.add(name as string);  // Only default export can be nameless
+                    exports.set(name as string, fn.getStart()); // Only default export can be nameless
                 }
             }
 
@@ -42,6 +43,7 @@ export default function transformer(program: ts.Program): ts.TransformerFactory<
                     postToId.set(id.getStart(), {
                         name: id.getText(),
                         isDefault: id.getText() === defaultExport,
+                        defPos: exports.get(id.getText()) as number,
                     });
                 }
             }
@@ -51,31 +53,34 @@ export default function transformer(program: ts.Program): ts.TransformerFactory<
             }
 
             // 3. Change the references
-            return visitNodeAndChildren(file, postToId, ctx);
+            return visitNodeAndChildren(file, postToId, typeChecker, ctx);
         };
     }
 
     throw new Error('Module target is not CommonJS');
 }
 
-function visitNodeAndChildren(node: ts.SourceFile, posToId: PosToIdMap, ctx: ts.TransformationContext): ts.SourceFile;
-function visitNodeAndChildren(node: ts.Node, posToId: PosToIdMap, ctx: ts.TransformationContext): ts.Node;
-function visitNodeAndChildren(node: ts.Node, posToId: PosToIdMap, ctx: ts.TransformationContext): ts.Node {
+function visitNodeAndChildren(node: ts.SourceFile, posToId: PosToIdMap, typeChecker: ts.TypeChecker, ctx: ts.TransformationContext): ts.SourceFile;
+function visitNodeAndChildren(node: ts.Node, posToId: PosToIdMap, typeChecker: ts.TypeChecker, ctx: ts.TransformationContext): ts.Node;
+function visitNodeAndChildren(node: ts.Node, posToId: PosToIdMap, typeChecker: ts.TypeChecker, ctx: ts.TransformationContext): ts.Node {
     return ts.visitEachChild(
-        visitNode(node, posToId),
-        childNode => visitNodeAndChildren(childNode, posToId, ctx),
+        visitNode(node, posToId, typeChecker),
+        childNode => visitNodeAndChildren(childNode, posToId, typeChecker, ctx),
         ctx);
 }
 
-function visitNode(node: ts.Node, idMap: PosToIdMap): ts.Node {
+function visitNode(node: ts.Node, idMap: PosToIdMap, typeChecker: ts.TypeChecker): ts.Node {
     if (ts.isIdentifier(node)) {
         const id = idMap.get(node.getStart());
         if (id && id.name === node.getText()) {
-            idMap.delete(node.getStart());
-            const fnName = id.isDefault ? 'default' : id.name;
-            // Not using ts.createPropertyAccess() since that triggers a
-            // weird error.
-            return ts.createIdentifier('exports.' + fnName);
+            const symbol = typeChecker.getSymbolAtLocation(node);
+            if (symbol && symbol.valueDeclaration.getStart() === id.defPos) {
+                idMap.delete(node.getStart());
+                const fnName = id.isDefault ? 'default' : id.name;
+                // Not using ts.createPropertyAccess() since that triggers a
+                // weird error.
+                return ts.createIdentifier('exports.' + fnName);
+            }
         }
     }
     return node;
